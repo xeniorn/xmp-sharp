@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if INTERNAL_LOGGING
+using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading;
@@ -381,3 +382,4 @@ namespace System.Diagnostics
         }
     }
 }
+#endif

@@ -293,7 +293,9 @@ namespace SE.Halligang.CsXmpToolkit
 			IntPtr pPropName = IntPtr.Zero;
 			IntPtr pPropValue = IntPtr.Zero;
 
+#if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
+#endif
 			try
 			{
 				pSchemaNS = MarshalHelper.GetString(schemaNS, Encoding.UTF8);
@@ -302,12 +304,16 @@ namespace SE.Halligang.CsXmpToolkit
 				{
 					pPropValue = MarshalHelper.GetString(propValue, Encoding.UTF8);
 				}
+#if INTERNAL_LOGGING
 				log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), propName + " = " + (propValue == null ? "null" : propValue));
+#endif
 				XMPMeta_SetProperty(xmpCoreHandle, pSchemaNS, pPropName, pPropValue, options);
 			}
 			catch (Exception ex)
 			{
+#if INTERNAL_LOGGING
 				log.AppendException(TraceLevel.Error, MethodInfo.GetCurrentMethod(), ex);
+#endif
 				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Marshal.GetLastWin32Error(), ex);
 			}
 			finally
@@ -329,7 +335,9 @@ namespace SE.Halligang.CsXmpToolkit
 			IntPtr pArrayName = IntPtr.Zero;
 			IntPtr pItemValue = IntPtr.Zero;
 
+#if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
+#endif
 			try
 			{
 				pSchemaNS = MarshalHelper.GetString(schemaNS, Encoding.UTF8);
@@ -338,12 +346,16 @@ namespace SE.Halligang.CsXmpToolkit
 				{
 					pItemValue = MarshalHelper.GetString(itemValue, Encoding.UTF8);
 				}
+#if INTERNAL_LOGGING
 				log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), arrayName + "[" + itemIndex.ToString() + "] = " + (itemValue == null ? "null" : itemValue));
+#endif
 				XMPMeta_SetArrayItem(xmpCoreHandle, pSchemaNS, pArrayName, itemIndex, pItemValue, options);
 			}
 			catch (Exception ex)
 			{
+#if INTERNAL_LOGGING
 				log.AppendException(TraceLevel.Error, MethodInfo.GetCurrentMethod(), ex);
+#endif
 				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Marshal.GetLastWin32Error(), ex);
 			}
 			finally
@@ -365,7 +377,9 @@ namespace SE.Halligang.CsXmpToolkit
 			IntPtr pArrayName = IntPtr.Zero;
 			IntPtr pItemValue = IntPtr.Zero;
 
+#if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
+#endif
 			try
 			{
 				pSchemaNS = MarshalHelper.GetString(schemaNS, Encoding.UTF8);
@@ -374,12 +388,16 @@ namespace SE.Halligang.CsXmpToolkit
 				{
 					pItemValue = MarshalHelper.GetString(itemValue, Encoding.UTF8);
 				}
+#if INTERNAL_LOGGING
 				log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), arrayName + ".Add(" + (itemValue == null ? "null" : itemValue) + ")");
+#endif
 				XMPMeta_AppendArrayItem(xmpCoreHandle, pSchemaNS, pArrayName, arrayOptions, pItemValue, options);
 			}
 			catch (Exception ex)
 			{
+#if INTERNAL_LOGGING
 				log.AppendException(TraceLevel.Error, MethodInfo.GetCurrentMethod(), ex);
+#endif
 				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Marshal.GetLastWin32Error(), ex);
 			}
 			finally
@@ -403,7 +421,9 @@ namespace SE.Halligang.CsXmpToolkit
 			IntPtr pFieldName = IntPtr.Zero;
 			IntPtr pFieldValue = IntPtr.Zero;
 
+#if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
+#endif
 			try
 			{
 				pSchemaNS = MarshalHelper.GetString(schemaNS, Encoding.UTF8);
@@ -411,12 +431,16 @@ namespace SE.Halligang.CsXmpToolkit
 				pFieldNS = MarshalHelper.GetString(fieldNS, Encoding.UTF8);
 				pFieldName = MarshalHelper.GetString(fieldName, Encoding.UTF8);
 				pFieldValue = MarshalHelper.GetString(fieldValue, Encoding.UTF8);
+#if INTERNAL_LOGGING
 				log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), structName + "." + fieldName + " = " + fieldValue);
+#endif
 				XMPMeta_SetStructField(xmpCoreHandle, pSchemaNS, pStructName, pFieldNS, pFieldName, pFieldValue, options);
 			}
 			catch (Exception ex)
 			{
+#if INTERNAL_LOGGING
 				log.AppendException(TraceLevel.Error, MethodInfo.GetCurrentMethod(), ex);
+#endif
 				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Marshal.GetLastWin32Error(), ex);
 			}
 			finally
@@ -439,7 +463,9 @@ namespace SE.Halligang.CsXmpToolkit
 			IntPtr pQualName = IntPtr.Zero;
 			IntPtr pQualValue = IntPtr.Zero;
 
+#if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
+#endif
 			try
 			{
 				pSchemaNS = MarshalHelper.GetString(schemaNS, Encoding.UTF8);
@@ -450,12 +476,16 @@ namespace SE.Halligang.CsXmpToolkit
 				{
 					pQualValue = MarshalHelper.GetString(qualValue, Encoding.UTF8);
 				}
+#if INTERNAL_LOGGING
 				log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), qualName + "(" + propName + ") = " + (qualValue == null ? "null" : qualValue));
+#endif
 				XMPMeta_SetQualifier(xmpCoreHandle, pSchemaNS, pPropName, pQualNS, pQualName, pQualValue, options);
 			}
 			catch (Exception ex)
 			{
+#if INTERNAL_LOGGING
 				log.AppendException(TraceLevel.Error, MethodInfo.GetCurrentMethod(), ex);
+#endif
 				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Marshal.GetLastWin32Error(), ex);
 			}
 			finally
@@ -486,7 +516,7 @@ namespace SE.Halligang.CsXmpToolkit
 		[DllImport("XmpToolkit", EntryPoint = "XMPMeta_SetQualifier", CharSet = CharSet.Auto, SetLastError = true)]
 		private static extern void XMPMeta_SetQualifier(IntPtr xmpCoreHandle, IntPtr schemaNS, IntPtr propName, IntPtr qualNS, IntPtr qualName, IntPtr qualValue, PropertyFlags options);
 
-		#endregion
+#endregion
 
 		#region Functions for deleting and detecting properties
 
@@ -1264,7 +1294,7 @@ namespace SE.Halligang.CsXmpToolkit
 
 		#endregion
 
-		#endregion
+#endregion
 
 		#region Static Public Member Functions
 
@@ -1749,6 +1779,6 @@ namespace SE.Halligang.CsXmpToolkit
 		[DllImport("XmpToolkit", EntryPoint = "Common_GetLastError", CharSet = CharSet.Auto)]
 		private static extern int Common_GetLastError();
 
-		#endregion
+#endregion
 	}
 }

@@ -21,18 +21,24 @@ namespace SE.Halligang.CsXmpToolkit
 
 		public static string DateTimeToXmpString(DateTime dateTime, TimeZone localTimeZone)
 		{
+#if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Converting: " + dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+#endif
 			PInvoke.XmpDateTime xmpdt = DateTimeToXmpDateTime(dateTime, localTimeZone);
 			string value;
 			XmpUtils.ConvertFromDate(xmpdt, out value);
+#if INTERNAL_LOGGING
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Result: " + value);
+#endif
 			return value;
 		}
 
 		internal static PInvoke.XmpDateTime DateTimeToXmpDateTime(DateTime dateTime, TimeZone localTimeZone)
 		{
+#if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
+#endif
 			TimeSpan offset = localTimeZone.GetUtcOffset(dateTime);
 			PInvoke.TimeZoneSign sign = PInvoke.TimeZoneSign.IsUtc;
 			if (offset.Hours < 0 || offset.Minutes < 0)
@@ -43,9 +49,10 @@ namespace SE.Halligang.CsXmpToolkit
 			{
 				sign = PInvoke.TimeZoneSign.EastOfUtc;
 			}
+#if INTERNAL_LOGGING
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Sign: " + sign.ToString());
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Offset: " + offset.Hours.ToString() + " hours, " + offset.Minutes.ToString() + " minutes");
-
+#endif
 			PInvoke.XmpDateTime xmpDateTime = new PInvoke.XmpDateTime();
 			xmpDateTime.Year = dateTime.Year;
 			xmpDateTime.Month = dateTime.Month;
