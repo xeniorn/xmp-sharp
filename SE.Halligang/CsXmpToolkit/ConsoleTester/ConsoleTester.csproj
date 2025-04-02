@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <Platforms>x64;x86</Platforms>
-	<OutputType>Library</OutputType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,8 +26,8 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
-	
-	<PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
@@ -44,9 +47,9 @@
     </None>
   </ItemGroup>
   <!--/XmpToolkit-->
-	
-	
+
   <ItemGroup>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.3" />
+    <ProjectReference Include="..\CsXmpToolkitNetStandard\CsXmpToolkitNetStandard.csproj" />
   </ItemGroup>
+
 </Project>
