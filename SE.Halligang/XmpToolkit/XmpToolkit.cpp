@@ -113,10 +113,10 @@ extern "C"
 		}
 	}
 
-	DllExport bool XMPFiles_GetThumbnail(SXMPFiles* pXmpFiles, XMP_ThumbnailInfo* tnailInfo)
-	{
-		return pXmpFiles->GetThumbnail(tnailInfo);
-	}
+	//DllExport bool XMPFiles_GetThumbnail(SXMPFiles* pXmpFiles, XMP_ThumbnailInfo* tnailInfo)
+	//{
+	//	return pXmpFiles->GetThumbnail(tnailInfo);
+	//}
 
 	DllExport void XMPFiles_PutXMP(SXMPFiles* pXmpFiles, SXMPMeta* xmpObj)
 	{
@@ -702,10 +702,10 @@ extern "C"
 		return SXMPMeta::DumpNamespaces(outProc, refCon);
 	}
 
-	DllExport XMP_Status XMPMeta_DumpAliases(XMP_TextOutputProc outProc, void* refCon)
-	{
-		return SXMPMeta::DumpAliases(outProc, refCon);
-	}
+	//DllExport XMP_Status XMPMeta_DumpAliases(XMP_TextOutputProc outProc, void* refCon)
+	//{
+	//	return SXMPMeta::DumpAliases(outProc, refCon);
+	//}
 
 	// Namespace Functions
 	// .........................................................................
@@ -818,135 +818,135 @@ extern "C"
 
 	// Alias Functions
 	// .........................................................................
-	DllExport void XMPMeta_RegisterAlias(XMP_StringPtr aliasNS, XMP_StringPtr aliasProp, XMP_StringPtr actualNS, XMP_StringPtr actualProp, XMP_OptionBits arrayForm)
-	{
-		SXMPMeta::RegisterAlias(aliasNS, aliasProp, actualNS, actualProp, arrayForm);
-	}
+	//DllExport void XMPMeta_RegisterAlias(XMP_StringPtr aliasNS, XMP_StringPtr aliasProp, XMP_StringPtr actualNS, XMP_StringPtr actualProp, XMP_OptionBits arrayForm)
+	//{
+	//	SXMPMeta::RegisterAlias(aliasNS, aliasProp, actualNS, actualProp, arrayForm);
+	//}
 
-	DllExport bool XMPMeta_ResolveAlias(XMP_StringPtr aliasNS, XMP_StringPtr aliasProp, XMP_StringPtr* actualNS, XMP_Uns32* actualNSLength, XMP_StringPtr* actualProp, XMP_Uns32* actualPropLength, XMP_OptionBits* arrayForm)
-	{
-		if (actualNSLength == NULL && actualPropLength == NULL)
-		{
-			return SXMPMeta::ResolveAlias(aliasNS, aliasProp, NULL, NULL, arrayForm);
-		}
-		else if (actualPropLength == NULL)
-		{
-			*actualNSLength = 0;
-			std::string tmpActualNS;
-			if (SXMPMeta::ResolveAlias(aliasNS, aliasProp, &tmpActualNS, NULL, arrayForm))
-			{
-				*actualNSLength = tmpActualNS.length();
-				try
-				{
-					*actualNS = NULL;
-					*actualNS = (XMP_StringPtr)malloc(*actualNSLength);
-					memcpy((void*)*actualNS, (void*)tmpActualNS.c_str(), *actualNSLength);
-					return true;
-				}
-				catch ( ... )
-				{
-					if (actualNSLength != NULL)
-					{
-						*actualNSLength = 0;
-						if (*actualNS != NULL)
-						{
-							delete *actualNS;
-							*actualNS = NULL;
-						}
-					}
+	//DllExport bool XMPMeta_ResolveAlias(XMP_StringPtr aliasNS, XMP_StringPtr aliasProp, XMP_StringPtr* actualNS, XMP_Uns32* actualNSLength, XMP_StringPtr* actualProp, XMP_Uns32* actualPropLength, XMP_OptionBits* arrayForm)
+	//{
+	//	if (actualNSLength == NULL && actualPropLength == NULL)
+	//	{
+	//		return SXMPMeta::ResolveAlias(aliasNS, aliasProp, NULL, NULL, arrayForm);
+	//	}
+	//	else if (actualPropLength == NULL)
+	//	{
+	//		*actualNSLength = 0;
+	//		std::string tmpActualNS;
+	//		if (SXMPMeta::ResolveAlias(aliasNS, aliasProp, &tmpActualNS, NULL, arrayForm))
+	//		{
+	//			*actualNSLength = tmpActualNS.length();
+	//			try
+	//			{
+	//				*actualNS = NULL;
+	//				*actualNS = (XMP_StringPtr)malloc(*actualNSLength);
+	//				memcpy((void*)*actualNS, (void*)tmpActualNS.c_str(), *actualNSLength);
+	//				return true;
+	//			}
+	//			catch ( ... )
+	//			{
+	//				if (actualNSLength != NULL)
+	//				{
+	//					*actualNSLength = 0;
+	//					if (*actualNS != NULL)
+	//					{
+	//						delete *actualNS;
+	//						*actualNS = NULL;
+	//					}
+	//				}
 
-					throw;
-				}
-			}
-		}
-		else if (actualNSLength == NULL)
-		{
-			*actualPropLength = 0;
-			std::string tmpActualProp;
-			if (SXMPMeta::ResolveAlias(aliasNS, aliasProp, NULL, &tmpActualProp, arrayForm))
-			{
-				*actualPropLength = tmpActualProp.length();
-				try
-				{
-					*actualProp = NULL;
-					*actualProp = (XMP_StringPtr)malloc(*actualPropLength);
-					memcpy((void*)*actualProp, (void*)tmpActualProp.c_str(), *actualPropLength);
-					return true;
-				}
-				catch ( ... )
-				{
-					if (actualPropLength != NULL)
-					{
-						*actualPropLength = 0;
-						if (*actualProp != NULL)
-						{
-							delete *actualProp;
-							*actualProp = NULL;
-						}
-					}
+	//				throw;
+	//			}
+	//		}
+	//	}
+	//	else if (actualNSLength == NULL)
+	//	{
+	//		*actualPropLength = 0;
+	//		std::string tmpActualProp;
+	//		if (SXMPMeta::ResolveAlias(aliasNS, aliasProp, NULL, &tmpActualProp, arrayForm))
+	//		{
+	//			*actualPropLength = tmpActualProp.length();
+	//			try
+	//			{
+	//				*actualProp = NULL;
+	//				*actualProp = (XMP_StringPtr)malloc(*actualPropLength);
+	//				memcpy((void*)*actualProp, (void*)tmpActualProp.c_str(), *actualPropLength);
+	//				return true;
+	//			}
+	//			catch ( ... )
+	//			{
+	//				if (actualPropLength != NULL)
+	//				{
+	//					*actualPropLength = 0;
+	//					if (*actualProp != NULL)
+	//					{
+	//						delete *actualProp;
+	//						*actualProp = NULL;
+	//					}
+	//				}
 
-					throw;
-				}
-			}
-		}
-		else
-		{
-			*actualNSLength = 0;
-			*actualPropLength = 0;
-			std::string tmpActualNS;
-			std::string tmpActualProp;
-			if (SXMPMeta::ResolveAlias(aliasNS, aliasProp, &tmpActualNS, &tmpActualProp, arrayForm))
-			{
-				*actualNSLength = tmpActualNS.length();
-				*actualPropLength = tmpActualProp.length();
-				try
-				{
-					*actualNS = NULL;
-					*actualProp = NULL;
-					*actualNS = (XMP_StringPtr)malloc(*actualNSLength);
-					*actualProp = (XMP_StringPtr)malloc(*actualPropLength);
-					memcpy((void*)*actualNS, (void*)tmpActualNS.c_str(), *actualNSLength);
-					memcpy((void*)*actualProp, (void*)tmpActualProp.c_str(), *actualPropLength);
-					return true;
-				}
-				catch ( ... )
-				{
-					if (actualNSLength != NULL)
-					{
-						*actualNSLength = 0;
-						if (*actualNS != NULL)
-						{
-							delete *actualNS;
-							*actualNS = NULL;
-						}
-					}
+	//				throw;
+	//			}
+	//		}
+	//	}
+	//	else
+	//	{
+	//		*actualNSLength = 0;
+	//		*actualPropLength = 0;
+	//		std::string tmpActualNS;
+	//		std::string tmpActualProp;
+	//		if (SXMPMeta::ResolveAlias(aliasNS, aliasProp, &tmpActualNS, &tmpActualProp, arrayForm))
+	//		{
+	//			*actualNSLength = tmpActualNS.length();
+	//			*actualPropLength = tmpActualProp.length();
+	//			try
+	//			{
+	//				*actualNS = NULL;
+	//				*actualProp = NULL;
+	//				*actualNS = (XMP_StringPtr)malloc(*actualNSLength);
+	//				*actualProp = (XMP_StringPtr)malloc(*actualPropLength);
+	//				memcpy((void*)*actualNS, (void*)tmpActualNS.c_str(), *actualNSLength);
+	//				memcpy((void*)*actualProp, (void*)tmpActualProp.c_str(), *actualPropLength);
+	//				return true;
+	//			}
+	//			catch ( ... )
+	//			{
+	//				if (actualNSLength != NULL)
+	//				{
+	//					*actualNSLength = 0;
+	//					if (*actualNS != NULL)
+	//					{
+	//						delete *actualNS;
+	//						*actualNS = NULL;
+	//					}
+	//				}
 
-					if (actualPropLength != NULL)
-					{
-						*actualPropLength = 0;
-						if (*actualProp != NULL)
-						{
-							delete *actualProp;
-							*actualProp = NULL;
-						}
-					}
+	//				if (actualPropLength != NULL)
+	//				{
+	//					*actualPropLength = 0;
+	//					if (*actualProp != NULL)
+	//					{
+	//						delete *actualProp;
+	//						*actualProp = NULL;
+	//					}
+	//				}
 
-					throw;
-				}
-			}
-		}
-		return false;
-	}
+	//				throw;
+	//			}
+	//		}
+	//	}
+	//	return false;
+	//}
 
-	DllExport void XMPMeta_DeleteAlias(XMP_StringPtr aliasNS, XMP_StringPtr aliasProp)
-	{
-		SXMPMeta::DeleteAlias(aliasNS, aliasProp);
-	}
+	//DllExport void XMPMeta_DeleteAlias(XMP_StringPtr aliasNS, XMP_StringPtr aliasProp)
+	//{
+	//	SXMPMeta::DeleteAlias(aliasNS, aliasProp);
+	//}
 
-	DllExport void XMPMeta_RegisterStandardAliases(XMP_StringPtr schemaNS)
-	{
-		SXMPMeta::RegisterStandardAliases(schemaNS);
-	}
+	//DllExport void XMPMeta_RegisterStandardAliases(XMP_StringPtr schemaNS)
+	//{
+	//	::RegisterStandardAliases(schemaNS);
+	//}
 }
 
 // XMP Utils
@@ -1382,10 +1382,15 @@ extern "C"
 		SXMPUtils::RemoveProperties(xmpObj, schemaNS, propName, options);
 	}
 
-	DllExport void XMPUtils_AppendProperties(SXMPMeta* source, SXMPMeta* dest, XMP_OptionBits options)
+	DllExport void XMPUtils_ApplyTemplate(SXMPMeta* workingXMP, const SXMPMeta& templateXMP, XMP_OptionBits options)
+	{
+		SXMPUtils::ApplyTemplate(workingXMP, templateXMP, options);
+	}
+
+	/*DllExport void XMPUtils_AppendProperties(SXMPMeta* source, SXMPMeta* dest, XMP_OptionBits options)
 	{
 		SXMPUtils::AppendProperties(*source, dest, options);
-	}
+	}*/
 
 	DllExport void XMPUtils_DuplicateSubtree(SXMPMeta* &source, SXMPMeta* dest, XMP_StringPtr sourceNS, XMP_StringPtr sourceRoot, XMP_StringPtr destNS, XMP_StringPtr destRoot, XMP_OptionBits options)
 	{

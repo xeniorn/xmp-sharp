@@ -339,7 +339,12 @@ namespace SE.Halligang.CsXmpToolkit
 			}
 		}
 
-		public static void ConvertFromDate(DateTime binValue, out string strValue)
+        public static void ConvertFromDate(DateTimeOffset binValue, out string strValue)
+        {
+            strValue = XmpDateTime.DateTimeToXmpString(binValue);
+        }
+
+        public static void ConvertFromDate(DateTime binValue, out string strValue)
 		{
 			strValue = XmpDateTime.DateTimeToXmpString(binValue, TimeZone.CurrentTimeZone);
 		}
@@ -453,9 +458,14 @@ namespace SE.Halligang.CsXmpToolkit
 			return result;
 		}
 
-		public static void ConvertToDate(string strValue, out DateTime binValue)
+        public static void ConvertToDateTimeOffset(string strValue, out DateTimeOffset binValue)
+        {
+            binValue = XmpDateTime.XmpStringToDateTimeOffset(strValue);
+        }
+
+        public static void ConvertToDate(string strValue, out DateTime binValue)
 		{
-			binValue = XmpDateTime.XmpStringToDateTime(strValue);
+			binValue = XmpDateTime.XmpStringToDateTimeOffset(strValue).LocalDateTime;
 		}
 
 		internal static void ConvertToDate(string strValue, out PInvoke.XmpDateTime binValue)
@@ -507,75 +517,75 @@ namespace SE.Halligang.CsXmpToolkit
 
 		#region Date/Time functions
 
-		public static void CurrentDateTime(out DateTime time)
-		{
-			try
-			{
-				PInvoke.XmpDateTime xmpDateTime;
-				XMPUtils_CurrentDateTime(out xmpDateTime);
-				time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
-			}
-			catch (Exception)
-			{
-				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
-			}
-		}
+		//public static void CurrentDateTime(out DateTime time)
+		//{
+		//	try
+		//	{
+		//		PInvoke.XmpDateTime xmpDateTime;
+		//		XMPUtils_CurrentDateTime(out xmpDateTime);
+		//		time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
+		//	}
+		//	catch (Exception)
+		//	{
+		//		throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
+		//	}
+		//}
 
-		public static void SetTimeZone(ref DateTime time)
-		{
-			try
-			{
-				PInvoke.XmpDateTime xmpDateTime = XmpDateTime.DateTimeToXmpDateTime(time, TimeZone.CurrentTimeZone);
-				XMPUtils_SetTimeZone(ref xmpDateTime);
-				time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
-			}
-			catch (Exception)
-			{
-				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
-			}
-		}
+		//public static void SetTimeZone(ref DateTime time)
+		//{
+		//	try
+		//	{
+		//		PInvoke.XmpDateTime xmpDateTime = XmpDateTime.DateTimeToXmpDateTime(time, TimeZone.CurrentTimeZone);
+		//		XMPUtils_SetTimeZone(ref xmpDateTime);
+		//		time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
+		//	}
+		//	catch (Exception)
+		//	{
+		//		throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
+		//	}
+		//}
 
-		public static void ConvertToUTCTime(ref DateTime time)
-		{
-			try
-			{
-				PInvoke.XmpDateTime xmpDateTime = XmpDateTime.DateTimeToXmpDateTime(time, TimeZone.CurrentTimeZone);
-				XMPUtils_ConvertToUTCTime(ref xmpDateTime);
-				time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
-			}
-			catch (Exception)
-			{
-				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
-			}
-		}
+		//public static void ConvertToUTCTime(ref DateTime time)
+		//{
+		//	try
+		//	{
+		//		PInvoke.XmpDateTime xmpDateTime = XmpDateTime.DateTimeToXmpDateTime(time, TimeZone.CurrentTimeZone);
+		//		XMPUtils_ConvertToUTCTime(ref xmpDateTime);
+		//		time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
+		//	}
+		//	catch (Exception)
+		//	{
+		//		throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
+		//	}
+		//}
 
-		public static void ConvertToLocalTime(ref DateTime time)
-		{
-			try
-			{
-				PInvoke.XmpDateTime xmpDateTime = XmpDateTime.DateTimeToXmpDateTime(time, TimeZone.CurrentTimeZone);
-				XMPUtils_ConvertToLocalTime(ref xmpDateTime);
-				time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
-			}
-			catch (Exception)
-			{
-				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
-			}
-		}
+		//public static void ConvertToLocalTime(ref DateTime time)
+		//{
+		//	try
+		//	{
+		//		PInvoke.XmpDateTime xmpDateTime = XmpDateTime.DateTimeToXmpDateTime(time, TimeZone.CurrentTimeZone);
+		//		XMPUtils_ConvertToLocalTime(ref xmpDateTime);
+		//		time = XmpDateTime.XmpDateTimeToDateTime(xmpDateTime);
+		//	}
+		//	catch (Exception)
+		//	{
+		//		throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
+		//	}
+		//}
 
-		public static int CompareDateTime(DateTime left, DateTime right)
-		{
-			try
-			{
-				PInvoke.XmpDateTime xmpDateTime1 = XmpDateTime.DateTimeToXmpDateTime(left, TimeZone.CurrentTimeZone);
-				PInvoke.XmpDateTime xmpDateTime2 = XmpDateTime.DateTimeToXmpDateTime(right, TimeZone.CurrentTimeZone);
-				return XMPUtils_CompareDateTime(xmpDateTime1, xmpDateTime2);
-			}
-			catch (Exception)
-			{
-				throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
-			}
-		}
+		//public static int CompareDateTime(DateTime left, DateTime right)
+		//{
+		//	try
+		//	{
+		//		PInvoke.XmpDateTime xmpDateTime1 = XmpDateTime.DateTimeToXmpDateTime(left, TimeZone.CurrentTimeZone);
+		//		PInvoke.XmpDateTime xmpDateTime2 = XmpDateTime.DateTimeToXmpDateTime(right, TimeZone.CurrentTimeZone);
+		//		return XMPUtils_CompareDateTime(xmpDateTime1, xmpDateTime2);
+		//	}
+		//	catch (Exception)
+		//	{
+		//		throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
+		//	}
+		//}
 
 		[DllImport("XmpToolkit", EntryPoint = "XMPUtils_CurrentDateTime", CharSet = CharSet.Auto)]
 		private static extern void XMPUtils_CurrentDateTime(out PInvoke.XmpDateTime time);
@@ -832,7 +842,8 @@ namespace SE.Halligang.CsXmpToolkit
 			}
 		}
 
-		public static void AppendProperties(XmpCore source, XmpCore dest, AppendMode options)
+        [Obsolete("Not implemented anymore")]
+        public static void AppendProperties(XmpCore source, XmpCore dest, AppendMode options)
 		{
 			try
 			{
@@ -880,7 +891,8 @@ namespace SE.Halligang.CsXmpToolkit
 		[DllImport("XmpToolkit", EntryPoint = "XMPUtils_RemoveProperties", CharSet = CharSet.Auto)]
 		private static extern bool XMPUtils_RemoveProperties(IntPtr xmpCore, IntPtr schemaNS, IntPtr propName, RemoveMode options);
 
-		[DllImport("XmpToolkit", EntryPoint = "XMPUtils_AppendProperties", CharSet = CharSet.Auto)]
+        [Obsolete("Not implemented anymore")]
+        [DllImport("XmpToolkit", EntryPoint = "XMPUtils_AppendProperties", CharSet = CharSet.Auto)]
 		private static extern bool XMPUtils_AppendProperties(IntPtr source, IntPtr dest, AppendMode options);
 
 		[DllImport("XmpToolkit", EntryPoint = "XMPUtils_DuplicateSubtree", CharSet = CharSet.Auto)]

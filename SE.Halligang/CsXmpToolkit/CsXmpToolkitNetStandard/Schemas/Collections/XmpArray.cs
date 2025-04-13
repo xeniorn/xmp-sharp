@@ -235,7 +235,65 @@ namespace SE.Halligang.CsXmpToolkit.Schemas
 			}
 		}
 
-		public static void DateCallback(XmpCore xmpCore, string schemaNamespace, string propertyPath,
+        public static void DateWithOffsetCallback(XmpCore xmpCore, string schemaNamespace, string propertyPath,
+            PropertyFlags options, XmpArrayCallbackType type, List<DateTimeOffset> items, int itemIndex, DateTimeOffset itemValue)
+        {
+            switch (type)
+            {
+                case XmpArrayCallbackType.Created:
+                    string schemaNS;
+                    string propPath;
+                    string propValue;
+
+                    XmpIterator iterator = new XmpIterator(xmpCore, schemaNamespace, propertyPath, IteratorMode.JustChildren);
+                    while (iterator.Next(out schemaNS, out propPath, out propValue, out options))
+                    {
+                        if (string.IsNullOrEmpty(propPath))
+                        {
+                            break;
+                        }
+                        if (propPath.IndexOf('[') >= 0 && propPath.IndexOf(']') >= 0)
+                        {
+                            items.Add(XmpDateTime.XmpStringToDateTimeOffset(propValue));
+                        }
+                    }
+                    break;
+                case XmpArrayCallbackType.Insert:
+                    for (int index = itemIndex - 1; index < items.Count - 1; index++)
+                    {
+                    }
+                    break;
+                case XmpArrayCallbackType.Set:
+                    break;
+                case XmpArrayCallbackType.Clear:
+                    xmpCore.DeleteProperty(schemaNamespace, propertyPath);
+                    break;
+                case XmpArrayCallbackType.Added:
+                    if (!xmpCore.DoesPropertyExist(schemaNamespace, propertyPath))
+                    {
+                        xmpCore.SetProperty(schemaNamespace, propertyPath, null, options);
+                    }
+                    PropertyFlags addFlags = PropertyFlags.None;
+                    if (itemIndex < items.Count)
+                    {
+                        addFlags |= PropertyFlags.InsertBeforeItem;
+                    }
+                    xmpCore.SetArrayItem(schemaNamespace, propertyPath, itemIndex, XmpDateTime.DateTimeToXmpString(itemValue), addFlags);
+                    break;
+                case XmpArrayCallbackType.Removed:
+                    if (items.Count == 0)
+                    {
+                        xmpCore.DeleteProperty(schemaNamespace, propertyPath);
+                    }
+                    else
+                    {
+                        xmpCore.DeleteArrayItem(schemaNamespace, propertyPath, itemIndex);
+                    }
+                    break;
+            }
+        }
+
+        public static void DateCallback(XmpCore xmpCore, string schemaNamespace, string propertyPath,
 			PropertyFlags options, XmpArrayCallbackType type, List<DateTime> items, int itemIndex, DateTime itemValue)
 		{
 			switch (type)
@@ -254,7 +312,7 @@ namespace SE.Halligang.CsXmpToolkit.Schemas
 						}
 						if (propPath.IndexOf('[') >= 0 && propPath.IndexOf(']') >= 0)
 						{							
-							items.Add(XmpDateTime.XmpStringToDateTime(propValue));
+							items.Add(XmpDateTime.XmpStringToDateTimeOffset(propValue).LocalDateTime);
 						}
 					}
 					break;
@@ -278,7 +336,7 @@ namespace SE.Halligang.CsXmpToolkit.Schemas
 					{
 						addFlags |= PropertyFlags.InsertBeforeItem;
 					}
-					xmpCore.SetArrayItem(schemaNamespace, propertyPath, itemIndex, XmpDateTime.DateTimeToXmpString(itemValue, TimeZone.CurrentTimeZone), addFlags);
+					xmpCore.SetArrayItem(schemaNamespace, propertyPath, itemIndex, XmpDateTime.DateTimeToXmpString(itemValue), addFlags);
 					break;
 				case XmpArrayCallbackType.Removed:
 					if (items.Count == 0)

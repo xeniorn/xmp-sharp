@@ -1,71 +1,105 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using SE.Halligang.CsXmpToolkit.PInvoke;
 
 namespace SE.Halligang.CsXmpToolkit
 {
 	internal static class XmpDateTime
 	{
-		public static DateTime XmpStringToDateTime(string xmpDateTime)
+		public static DateTimeOffset XmpStringToDateTimeOffset(string xmpDateTime)
 		{
 			PInvoke.XmpDateTime xmpdt;
 			XmpUtils.ConvertToDate(xmpDateTime, out xmpdt);
 			return XmpDateTimeToDateTime(xmpdt);
 		}
 
-		internal static DateTime XmpDateTimeToDateTime(PInvoke.XmpDateTime xmpDateTime)
+		internal static DateTimeOffset XmpDateTimeToDateTime(PInvoke.XmpDateTime xmpDateTime)
 		{
-			return new DateTime(xmpDateTime.Year, xmpDateTime.Month, xmpDateTime.Day, xmpDateTime.Hour,
-				xmpDateTime.Minute, xmpDateTime.Second, xmpDateTime.NanoSecond, DateTimeKind.Local);
+			return new DateTimeOffset(xmpDateTime.Year, xmpDateTime.Month, xmpDateTime.Day, xmpDateTime.Hour,
+				xmpDateTime.Minute, xmpDateTime.Second, xmpDateTime.NanoSecond / 1_000_000, XmpDateTimeToUtcOffset(xmpDateTime));
 		}
 
-		public static string DateTimeToXmpString(DateTime dateTime, TimeZone localTimeZone)
-		{
+        private static TimeSpan XmpDateTimeToUtcOffset(PInvoke.XmpDateTime xmpDateTime)
+        {
+			int sign;
+            switch (xmpDateTime.TZSign)
+            {
+                case TimeZoneSign.WestOfUtc:
+                    sign = -1;
+                    break;
+                case TimeZoneSign.IsUtc:
+                    sign = 0;
+                    break;
+                case TimeZoneSign.EastOfUtc:
+                    sign = 1;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return TimeSpan.FromMinutes(sign * (60 * xmpDateTime.TZHour + xmpDateTime.TZMinute));
+        }
+
+        public static string DateTimeToXmpString(DateTimeOffset dateTime)
+        {
 #if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Converting: " + dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
 #endif
-			PInvoke.XmpDateTime xmpdt = DateTimeToXmpDateTime(dateTime, localTimeZone);
-			string value;
-			XmpUtils.ConvertFromDate(xmpdt, out value);
+            PInvoke.XmpDateTime xmpdt = DateTimeToXmpDateTime(dateTime);
+            string value;
+            XmpUtils.ConvertFromDate(xmpdt, out value);
 #if INTERNAL_LOGGING
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Result: " + value);
 #endif
-			return value;
-		}
+            return value;
+        }
 
-		internal static PInvoke.XmpDateTime DateTimeToXmpDateTime(DateTime dateTime, TimeZone localTimeZone)
-		{
+        public static string DateTimeToXmpString(DateTime dateTime, TimeZone localTimeZone)
+            => DateTimeToXmpString(new DateTimeOffset(dateTime, localTimeZone.GetUtcOffset(dateTime)));
+
+        internal static PInvoke.XmpDateTime DateTimeToXmpDateTime(DateTime dateTime, TimeZone localTimeZone)
+            => DateTimeToXmpDateTime(new DateTimeOffset(dateTime, localTimeZone.GetUtcOffset(dateTime)));
+
+        internal static PInvoke.XmpDateTime DateTimeToXmpDateTime(DateTimeOffset dateTime)
+        {
 #if INTERNAL_LOGGING
 			LogFile log = LogFile.GetInstance("CsXmpToolkit");
 #endif
-			TimeSpan offset = localTimeZone.GetUtcOffset(dateTime);
-			PInvoke.TimeZoneSign sign = PInvoke.TimeZoneSign.IsUtc;
-			if (offset.Hours < 0 || offset.Minutes < 0)
-			{
-				sign = PInvoke.TimeZoneSign.WestOfUtc;
-			}
-			else if (offset.Hours > 0 || offset.Minutes > 0)
-			{
-				sign = PInvoke.TimeZoneSign.EastOfUtc;
-			}
+            TimeSpan offset = dateTime.Offset;
+            PInvoke.TimeZoneSign sign = PInvoke.TimeZoneSign.IsUtc;
+            if (offset.Hours < 0 || offset.Minutes < 0)
+            {
+                sign = PInvoke.TimeZoneSign.WestOfUtc;
+            }
+            else if (offset.Hours > 0 || offset.Minutes > 0)
+            {
+                sign = PInvoke.TimeZoneSign.EastOfUtc;
+            }
 #if INTERNAL_LOGGING
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Sign: " + sign.ToString());
 			log.AppendString(TraceLevel.Verbose, MethodInfo.GetCurrentMethod(), "Offset: " + offset.Hours.ToString() + " hours, " + offset.Minutes.ToString() + " minutes");
 #endif
-			PInvoke.XmpDateTime xmpDateTime = new PInvoke.XmpDateTime();
-			xmpDateTime.Year = dateTime.Year;
-			xmpDateTime.Month = dateTime.Month;
-			xmpDateTime.Day = dateTime.Day;
-			xmpDateTime.Hour = dateTime.Hour;
-			xmpDateTime.Minute = dateTime.Minute;
-			xmpDateTime.Second = dateTime.Second;
-			xmpDateTime.NanoSecond = 0; // dateTime.Millisecond;
-			xmpDateTime.TZSign = sign;
-			xmpDateTime.TZHour = Math.Abs(offset.Hours);
-			xmpDateTime.TZMinute = Math.Abs(offset.Minutes);
+            PInvoke.XmpDateTime xmpDateTime = new PInvoke.XmpDateTime
+            {
+                Year = dateTime.Year,
+                Month = dateTime.Month,
+                Day = dateTime.Day,
+                Hour = dateTime.Hour,
+                Minute = dateTime.Minute,
+                Second = dateTime.Second,
+                NanoSecond = 0, // dateTime.Millisecond;
+                TZSign = sign,
+                TZHour = Math.Abs(offset.Hours),
+                TZMinute = Math.Abs(offset.Minutes),
 
-			return xmpDateTime;
-		}
-	}
+                HasDate = true,
+                HasTime = true,
+                HasTimeZone = true
+            };
+
+            return xmpDateTime;
+        }
+    }
 }

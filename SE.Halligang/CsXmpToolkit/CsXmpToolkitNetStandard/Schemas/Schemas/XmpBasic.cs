@@ -45,7 +45,7 @@ namespace SE.Halligang.CsXmpToolkit.Schemas
 			}
 			else
 			{
-				return XmpDateTime.XmpStringToDateTime(propertyValue);
+				return XmpDateTime.XmpStringToDateTimeOffset(propertyValue).LocalDateTime;
 			}
 		}
 

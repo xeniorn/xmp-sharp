@@ -973,7 +973,42 @@ namespace SE.Halligang.CsXmpToolkit
 			return result; 
 		}
 
-		public bool GetProperty(string schemaNS, string propName, out DateTime propValue, out PropertyFlags options)
+        public bool GetProperty(string schemaNS, string propName, out DateTimeOffset propValue, out PropertyFlags options)
+        {
+            AssertValidState();
+
+            IntPtr pSchemaNS = IntPtr.Zero;
+            IntPtr pPropName = IntPtr.Zero;
+            PInvoke.XmpDateTime pPropValue = new PInvoke.XmpDateTime();
+            bool result = false;
+            try
+            {
+                pSchemaNS = MarshalHelper.GetString(schemaNS, Encoding.UTF8);
+                pPropName = MarshalHelper.GetString(propName, Encoding.UTF8);
+                if (XMPMeta_GetProperty_Date(xmpCoreHandle, pSchemaNS, pPropName, ref pPropValue, out options))
+                {
+                    propValue = XmpDateTime.XmpDateTimeToDateTime(pPropValue);
+                    result = true;
+                }
+                else
+                {
+                    propValue = DateTime.MinValue;
+                    result = false;
+                }
+            }
+            catch (Exception)
+            {
+                throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
+            }
+            finally
+            {
+                MarshalHelper.FreeString(pSchemaNS);
+                MarshalHelper.FreeString(pPropName);
+            }
+            return result;
+        }
+
+        public bool GetProperty(string schemaNS, string propName, out DateTime propValue, out PropertyFlags options)
 		{
 			AssertValidState();
 
@@ -987,7 +1022,7 @@ namespace SE.Halligang.CsXmpToolkit
 				pPropName = MarshalHelper.GetString(propName, Encoding.UTF8);
 				if (XMPMeta_GetProperty_Date(xmpCoreHandle, pSchemaNS, pPropName, ref pPropValue, out options))
 				{
-					propValue = XmpDateTime.XmpDateTimeToDateTime(pPropValue);
+					propValue = XmpDateTime.XmpDateTimeToDateTime(pPropValue).LocalDateTime;
 					result = true;
 				}
 				else
@@ -1104,7 +1139,33 @@ namespace SE.Halligang.CsXmpToolkit
 			}
 		}
 
-		public void SetProperty(string schemaNS, string propName, DateTime propValue, PropertyFlags options)
+		public void SetProperty(string schemaNS, string propName, DateTimeOffset propValue, PropertyFlags options)
+        {
+            AssertValidState();
+
+            IntPtr pSchemaNS = IntPtr.Zero;
+            IntPtr pPropName = IntPtr.Zero;
+
+            PInvoke.XmpDateTime pPropValue = XmpDateTime.DateTimeToXmpDateTime(propValue);
+
+            try
+            {
+                pSchemaNS = MarshalHelper.GetString(schemaNS, Encoding.UTF8);
+                pPropName = MarshalHelper.GetString(propName, Encoding.UTF8);
+                XMPMeta_SetProperty_Date(xmpCoreHandle, pSchemaNS, pPropName, pPropValue, options);
+            }
+            catch (Exception)
+            {
+                throw new XmpException("Exception occured in XmpToolkit.", (XmpErrorCode)Common_GetLastError());
+            }
+            finally
+            {
+                MarshalHelper.FreeString(pSchemaNS);
+                MarshalHelper.FreeString(pPropName);
+            }
+        }
+
+        public void SetProperty(string schemaNS, string propName, DateTime propValue, PropertyFlags options)
 		{
 			AssertValidState();
 
@@ -1718,16 +1779,20 @@ namespace SE.Halligang.CsXmpToolkit
 			}
 		}
 
-		[DllImport("XmpToolkit", EntryPoint = "XMPMeta_RegisterAlias", CharSet = CharSet.Auto)]
+        [Obsolete("Not implemented anymore")]
+        [DllImport("XmpToolkit", EntryPoint = "XMPMeta_RegisterAlias", CharSet = CharSet.Auto)]
 		private static extern void XMPMeta_RegisterAlias(IntPtr aliasNS, IntPtr aliasProp, IntPtr actualNS, IntPtr actualProp, PropertyFlags arrayForm);
 
-		[DllImport("XmpToolkit", EntryPoint = "XMPMeta_ResolveAlias", CharSet = CharSet.Auto)]
+        [Obsolete("Not implemented anymore")]
+        [DllImport("XmpToolkit", EntryPoint = "XMPMeta_ResolveAlias", CharSet = CharSet.Auto)]
 		private static extern bool XMPMeta_ResolveAlias(IntPtr aliasNS, IntPtr aliasProp, out IntPtr actualNS, out int actualNSLength, out IntPtr actualProp, out int actualPropLength, out PropertyFlags arrayForm);
 
-		[DllImport("XmpToolkit", EntryPoint = "XMPMeta_DeleteAlias", CharSet = CharSet.Auto)]
+        [Obsolete("Not implemented anymore")]
+        [DllImport("XmpToolkit", EntryPoint = "XMPMeta_DeleteAlias", CharSet = CharSet.Auto)]
 		private static extern void XMPMeta_DeleteAlias(IntPtr aliasNS, IntPtr aliasProp);
 
-		[DllImport("XmpToolkit", EntryPoint = "XMPMeta_RegisterStandardAliases", CharSet = CharSet.Auto)]
+        [Obsolete("Not implemented anymore")]
+        [DllImport("XmpToolkit", EntryPoint = "XMPMeta_RegisterStandardAliases", CharSet = CharSet.Auto)]
 		private static extern void XMPMeta_RegisterStandardAliases(IntPtr schemaNS);
 
 		#endregion
